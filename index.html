@@ -44,7 +44,7 @@
     voices = this.getVoices();
     // logs the built-in voices in your OS
     // console.log(voices);
-    const voiceOptions = voices.map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`).join('');
+    const voiceOptions = voices.filter(voice => voice.lang.includes('en')).map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`).join('');
     voicesDropdown.innerHTML = voiceOptions;
   }
 
@@ -60,8 +60,25 @@
     speechSynthesis.speak(msg);
   }
 
+  // will set voice to match the value of changed inputs (rate, pitch, textarea)
+  function setOption() {
+    msg[this.name] = this.value;
+    toggle();
+  }
+
+  function startSpeak() {
+    speechSynthesis.speak(msg);
+  }
+
+  function stopSpeak() {
+    speechSynthesis.cancel();
+  }
+
   speechSynthesis.addEventListener('voiceschanged', populateVoices);
   voicesDropdown.addEventListener('change', setVoice);
+  options.forEach(option => option.addEventListener('change', setOption));
+  speakButton.addEventListener('click', startSpeak);
+  stopButton.addEventListener('click', stopSpeak);
 </script>
 
 </body>
