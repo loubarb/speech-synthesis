@@ -29,12 +29,39 @@
     </div>
 
 <script>
+  // what person says, how fast, the pitch, & the voice
   const msg = new SpeechSynthesisUtterance();
   let voices = [];
   const voicesDropdown = document.querySelector('[name="voice"]');
   const options = document.querySelectorAll('[type="range"], [name="text"]');
   const speakButton = document.querySelector('#speak');
   const stopButton = document.querySelector('#stop');
+
+  // sets default text to whatever is in the textarea
+  msg.text = document.querySelector('[name="text"]').value;
+
+  function populateVoices() {
+    voices = this.getVoices();
+    // logs the built-in voices in your OS
+    // console.log(voices);
+    const voiceOptions = voices.map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`).join('');
+    voicesDropdown.innerHTML = voiceOptions;
+  }
+
+  // loops over voice array to find matching name attribute with selected voice (this.value) from dropdown
+  function setVoice() {
+    msg.voice = voices.find(voice => voice.name === this.value);
+    toggle();
+  }
+
+  // restarts speaking when new voice is selected
+  function toggle() {
+    speechSynthesis.cancel();
+    speechSynthesis.speak(msg);
+  }
+
+  speechSynthesis.addEventListener('voiceschanged', populateVoices);
+  voicesDropdown.addEventListener('change', setVoice);
 </script>
 
 </body>
